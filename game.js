@@ -1,93 +1,88 @@
 const question = document.getElementById("question");
 const choices = Array.from(document.getElementsByClassName("choice-text"));
-console.log(choices);
 
 let currentQuestion = {};
 let acceptingAnswers = false;
 let score = 0;
 let questionCounter = 0;
-let availableQuestions = [];
+let availableQuesions = [];
 
 let questions = [
-    {
-      question: "Inside which HTML element do we put the JavaScript??",
-      choice1: "<script>",
-      choice2: "<javascript>",
-      choice3: "<js>",
-      choice4: "<scripting>",
-      answer: 1
-    },
-    {
-      question:
-        "What is the correct syntax for referring to an external script called 'xxx.js'?",
-      choice1: "<script href='xxx.js'>",
-      choice2: "<script name='xxx.js'>",
-      choice3: "<script src='xxx.js'>",
-      choice4: "<script file='xxx.js'>",
-      answer: 3
-    },
-    {
-      question: " How do you write 'Hello World' in an alert box?",
-      choice1: "msgBox('Hello World');",
-      choice2: "alertBox('Hello World');",
-      choice3: "msg('Hello World');",
-      choice4: "alert('Hello World');",
-      answer: 4
-    }
-  ];
-
-  //constants       
-
-  const_Correct_Bonus = 10;
-  const_Max_Questions = 3;
-  
-  startGame = () => {
-    questionCounter = 0;
-    score = 0;
-    availableQuestions = [...questions];    
-    console.log(availableQuestions);
-    getNewQuestion();
+  {
+    question: "Inside which HTML element do we put the JavaScript??",
+    choice1: "<script>",
+    choice2: "<javascript>",
+    choice3: "<js>",
+    choice4: "<scripting>",
+    answer: 1
+  },
+  {
+    question:
+      "What is the correct syntax for referring to an external script called 'xxx.js'?",
+    choice1: "<script href='xxx.js'>",
+    choice2: "<script name='xxx.js'>",
+    choice3: "<script src='xxx.js'>",
+    choice4: "<script file='xxx.js'>",
+    answer: 3
+  },
+  {
+    question: " How do you write 'Hello World' in an alert box?",
+    choice1: "msgBox('Hello World');",
+    choice2: "alertBox('Hello World');",
+    choice3: "msg('Hello World');",
+    choice4: "alert('Hello World');",
+    answer: 4
   }
+];
 
-  getNewQuestion = () => {
-    
-    questionCounter++;
-    const questionIndex = Math.floor(Math.random() * availableQuestions.length);
-    currentQuestion = availableQuestions[questionIndex];
-    question.innerText = currentQuestion.question;
+//CONSTANTS
+const CORRECT_BONUS = 10;
+const MAX_QUESTIONS = 3;
 
-    choices.forEach (choice => {
-      const number = choice.dataset['number'];
-      choice.innerText = currentQuestion['choice' + number];
-    });
+startGame = () => {
+  questionCounter = 0;
+  score = 0;
+  availableQuesions = [...questions];
+  getNewQuestion();
+};
 
-    availableQuestions.splice(questionIndex, 1);
-
-    acceptingAnswers = true;
-  };
+getNewQuestion = () => {
+  if (availableQuesions.length === 0 || questionCounter >= MAX_QUESTIONS) {
+    //go to the end page
+    return window.location.assign("/end.html");
+  }
+  questionCounter++;
+  const questionIndex = Math.floor(Math.random() * availableQuesions.length);
+  currentQuestion = availableQuesions[questionIndex];
+  question.innerText = currentQuestion.question;
 
   choices.forEach(choice => {
-    choice.addEventListener('click', e => {
-        if(!acceptingAnswers) return;
+    const number = choice.dataset["number"];
+    choice.innerText = currentQuestion["choice" + number];
+  });
 
-        acceptingAnswers = false;
-        const selectedChoice = e.target;
-        const selectedAnswer = selectedChoice.dataset['number'];
+  availableQuesions.splice(questionIndex, 1);
+  acceptingAnswers = true;
+};
 
-        const classToApply = selectedAnswer == currentQuestion.answer ? 'correct' : 'incorrect';
+choices.forEach(choice => {
+  choice.addEventListener("click", e => {
+    if (!acceptingAnswers) return;
 
-        if(classToApply === 'correct') {
-            incrementScore(Correct_Bonus);
-        }
+    acceptingAnswers = false;
+    const selectedChoice = e.target;
+    const selectedAnswer = selectedChoice.dataset["number"];  
 
-        selectedChoice.parentElement.classList.add(classToApply);
+    const classToApply =
+      selectedAnswer == currentQuestion.answer ? "correct" : "incorrect";
 
-        setTimeout(() => {
-            selectedChoice.parentElement.classList.remove(classToApply);
-            getNewQuestion();
-        }, 1000);
+    selectedChoice.parentElement.classList.add(classToApply);
+
+    setTimeout(() => {
+      selectedChoice.parentElement.classList.remove(classToApply);
+      getNewQuestion();
+    }, 1000);
   });
 });
 
-  
-  startGame();
+startGame();
